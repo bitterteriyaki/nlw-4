@@ -20,23 +20,40 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-import 'reflect-metadata';
-import express from 'express';
+import { MigrationInterface, QueryRunner, Table } from 'typeorm';
 
-import { log } from './utils';
-import './database';
+const TABLE_NAME = 'users';
 
-const app = express();
-const port = 3000;
+export class CreateUser1618691623816 implements MigrationInterface {
+  public async up(queryRunner: QueryRunner): Promise<void> {
+    await queryRunner.createTable(
+      new Table({
+        name: TABLE_NAME,
+        columns: [
+          {
+            name: 'id',
+            type: 'uuid',
+            isPrimary: true
+          },
+          {
+            name: 'name',
+            type: 'varchar'
+          },
+          {
+            name: 'email',
+            type: 'varchar'
+          },
+          {
+            name: 'created_at',
+            type: 'timestamp',
+            default: 'now()'
+          }
+        ]
+      })
+    )
+  }
 
-import middlewares from './middlewares';
-import routes from './routes';
-import handlers from './handlers';
-
-middlewares.init(app);
-routes.init(app);
-handlers.init(app);
-
-app.listen(port, () => {
-  log(`Listening at http://localhost:${port}`);
-})
+  public async down(queryRunner: QueryRunner): Promise<void> {
+    await queryRunner.dropTable(TABLE_NAME);
+  }
+}

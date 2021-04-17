@@ -20,23 +20,20 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-import 'reflect-metadata';
-import express from 'express';
+import { ErrorRequestHandler, Express } from 'express';
+import { AppError } from './errors';
 
-import { log } from './utils';
-import './database';
+const errorHandler: ErrorRequestHandler = (err, _req, res, next) => {
+  if (!(err instanceof AppError)) return next(err);
 
-const app = express();
-const port = 3000;
+  const { status, message } = err;
+  const json = { error: { status: status, message: message } };
 
-import middlewares from './middlewares';
-import routes from './routes';
-import handlers from './handlers';
+  res.status(status).json(json);
+};
 
-middlewares.init(app);
-routes.init(app);
-handlers.init(app);
-
-app.listen(port, () => {
-  log(`Listening at http://localhost:${port}`);
-})
+export default {
+  init(app: Express) {
+    app.use(errorHandler);
+  }
+}

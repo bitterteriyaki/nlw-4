@@ -59,4 +59,4 @@ function log(...messages: string[]) {
   console.log(`${RED}[app]${RESET}`, ...messages);
 }
 
-export { ColoursEnum, log };
+export { ColoursEnum, log }
