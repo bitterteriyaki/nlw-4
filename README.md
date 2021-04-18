@@ -65,7 +65,7 @@ As seguintes tecnologias foram usadas neste projeto:
 
 ## Autor
 <div style="text-align: center;">
-  <img src="https://avatars.githubusercontent.com/u/82721542" style="width: 64px; border-radius: 5px;"/>
+  <img src="https://cdn.discordapp.com/attachments/816517409573437470/833426158996422707/image.png"/>
   <p><strong>kyomi</strong></p>
 
   Desenvolvedor proficiente em Python, com conhecimentos em diversas linguagens.
