@@ -12,11 +12,11 @@
 Tabela de conteúdos
 =================
 <!--ts-->
-  * [Pré-requisitos](#pre-requisitos)
-  * [Instalação](#instalacao)
+  * [Pré-requisitos](#pré-requisitos)
+  * [Instalação](#instalação)
   * [Tecnologias usadas](#tecnologias-usadas)
   * [Autor](#autor)
-  * [Licença](#licenca)
+  * [Licença](#licença)
 
 ## Pré-requisitos
 Antes de começar, verifique se você possui o Node e o Git instalados.
