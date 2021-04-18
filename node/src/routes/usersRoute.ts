@@ -22,6 +22,7 @@
 
 import { Router } from 'express';
 import { getCustomRepository } from 'typeorm';
+import * as yup from 'yup';
 
 import { AppError } from '../errors';
 import UsersRepository from '../repositories/UsersRepository';
@@ -31,10 +32,19 @@ const router = Router();
 router.post('/', async (req, res, next) => {
   const { name, email } = req.body;
 
+  const schema = yup.object().shape({
+    name: yup.string().required(),
+    email: yup.string().email().required()
+  });
+
+  if (!(await schema.isValid(req.body))) {
+    throw new AppError('Invalid fields');
+  }
+
   const users = getCustomRepository(UsersRepository)
 
   if (await users.findOne({ email })) {
-    return next(new AppError(400, 'User already exists'));
+    throw new AppError('User already exists');
   }
 
   const user = users.create({ name, email });

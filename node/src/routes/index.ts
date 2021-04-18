@@ -24,12 +24,14 @@ import { Express } from 'express';
 
 import usersRoute from './usersRoute';
 import surveysRoute from './surveysRoute';
-import responsesRoute from './responsesRouter';
+import responsesRoute from './responsesRoute';
+import npsRoute from './npsRoute';
 
 export default {
   init(app: Express) {
     app.use(usersRoute.path, usersRoute.router);
     app.use(surveysRoute.path, surveysRoute.router);
     app.use(responsesRoute.path, responsesRoute.router);
+    app.use(npsRoute.path, npsRoute.router);
   }
 }

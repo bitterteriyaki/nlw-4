@@ -20,63 +20,29 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-import { resolve } from 'path';
-
-import { json, Router } from 'express';
+import { Router } from 'express';
 import { getCustomRepository } from 'typeorm';
 
-import UsersRepository from '../repositories/UsersRepository';
-import SurveysRepository from '../repositories/SurveysRepository';
 import SurveysResponsesRepository from '../repositories/SurveysResponsesRepository';
-
-import MailService from '../services/MailService';
 import { AppError } from '../errors';
 
 const router = Router();
 
-router.post('/', async (req, res, next) => {
-  const { email, survey_id } = req.body;
+router.get('/:value', async (req, res, next) => {
+  const { value } = req.params;
+  const { s } = req.query;
 
-  const users = getCustomRepository(UsersRepository);
-  const surveys = getCustomRepository(SurveysRepository);
   const responses = getCustomRepository(SurveysResponsesRepository);
+  const response = await responses.findOne({ id: String(s) });
 
-  const user = await users.findOne({ email });
-  const survey = await surveys.findOne({ id: survey_id });
-
-  if (!user) {
-    return next(new AppError(400, 'User does not exists'));
+  if (!response) {
+    throw new AppError('Response does not exists');
   }
 
-  if (!survey) {
-    return next(new AppError(400, 'Survey does not exists'));
-  }
+  response.value = Number(value);
+  await responses.save(response);
 
-  const path = resolve(__dirname, '..', 'views', 'emails', 'npsMail.hbs');
-  const variables = {
-    name: user.name,
-    title: survey.title,
-    description: survey.description,
-    user_id: user.id,
-    link: process.env.URL_MAIL
-  };
-
-  const existingResponse = await responses.findOne({
-    where: [{ user_id: user.id }, { value: null }],
-    relations: ['user', 'survey']
-  });
-
-  if (existingResponse) {
-    await MailService.send(email, survey.title, variables, path);
-    return res.json(existingResponse);
-  }
-
-  const surveyResponse = responses.create({ user_id: user.id, survey_id });
-  await responses.save(surveyResponse);
-
-  await MailService.send(email, survey.title, variables, path);
-
-  return res.json(surveyResponse);
+  return res.json(response);
 });
 
 export default {

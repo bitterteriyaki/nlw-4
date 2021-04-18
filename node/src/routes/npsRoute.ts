@@ -20,43 +20,30 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-import request from 'supertest';
-import { getConnection } from 'typeorm';
+import { Router } from 'express';
+import { getCustomRepository, Not, IsNull } from 'typeorm';
 
-import createConnection from '../database';
-import app from '../app';
+import SurveysResponseRepository from '../repositories/SurveysResponsesRepository';
 
-const exampleSurvey = {
-  title: 'Example survey title',
-  description: 'Example survey description.'
+const router = Router();
+
+router.get('/:survey_id', async (req, res) => {
+  const { survey_id } = req.params;
+
+  const repository = getCustomRepository(SurveysResponseRepository);
+  const responses = await repository.find({ survey_id, value: Not(IsNull()) });
+  
+  const detractors = responses.filter(survey => survey.value >= 0 && survey.value <= 6).length;
+  const promoters = responses.filter(survey => survey.value >= 9 && survey.value <= 10).length;
+  const passives = responses.filter(survey => survey.value >= 7 && survey.value <= 8).length;
+
+  const total = responses.length;
+  const nps = Number((((promoters - detractors) / total) * 100).toFixed(2));
+
+  return res.json({ detractors, promoters, passives, total, nps });
+});
+
+export default {
+  path: '/nps',
+  router: router
 }
-
-describe('Surveys', () => {
-  beforeAll(async () => {
-    const connection = await createConnection();
-    await connection.runMigrations()
-  });
-
-  afterAll(async () => {
-    const connection = getConnection();
-    await connection.dropDatabase();
-    await connection.close();
-  });
-
-  it('Should be able to create a new survey', async () => {
-    const res = await request(app)
-      .post('/surveys')
-      .send(exampleSurvey);
-
-    expect(res.status).toBe(201)
-  });
-
-  it('Should be able to get all surveys', async () => {
-    await request(app)
-      .post('/surveys')
-      .send(exampleSurvey);
-
-    const res = await request(app).get('/surveys');
-    expect(res.body.length).toBe(2)
-  })
-})

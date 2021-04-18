@@ -21,9 +21,10 @@
 // SOFTWARE.
 
 import request from 'supertest';
-import app from '../app';
+import { getConnection } from 'typeorm';
 
 import createConnection from '../database';
+import app from '../app';
 
 
 const exampleUser = {
@@ -35,6 +36,12 @@ describe('Users', () => {
   beforeAll(async () => {
     const connection = await createConnection();
     await connection.runMigrations()
+  });
+
+  afterAll(async () => {
+    const connection = getConnection();
+    await connection.dropDatabase();
+    await connection.close();
   });
 
   it('Should be able to create a new user', async () => {

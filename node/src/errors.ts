@@ -21,12 +21,12 @@
 // SOFTWARE.
 
 class AppError {
-  public readonly status: number;
   public readonly message: string;
+  public readonly status: number;
 
-  constructor(status: number, message: string) {
-    this.status = status;
+  constructor(message: string, status: number = 400) {
     this.message = message;
+    this.status = status;
   }
 };
 
