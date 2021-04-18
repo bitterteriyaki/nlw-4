@@ -50,7 +50,7 @@ export class CreateUser1618691623816 implements MigrationInterface {
           }
         ]
       })
-    )
+    );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {

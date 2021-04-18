@@ -14,22 +14,16 @@
 
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRzINGEMENT. IN NO EVENT SHALL THE
 // AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-import { Express } from 'express';
+import { EntityRepository, Repository } from 'typeorm';
+import SurveyResponse from '../models/SurveyResponse';
 
-import usersRoute from './usersRoute';
-import surveysRoute from './surveysRoute';
-import responsesRoute from './responsesRouter';
+@EntityRepository(SurveyResponse)
+class SurveysResponseRepository extends Repository<SurveyResponse> {};
 
-export default {
-  init(app: Express) {
-    app.use(usersRoute.path, usersRoute.router);
-    app.use(surveysRoute.path, surveysRoute.router);
-    app.use(responsesRoute.path, responsesRoute.router);
-  }
-}
+export default SurveysResponseRepository

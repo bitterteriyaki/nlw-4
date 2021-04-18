@@ -20,16 +20,41 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-import { Express } from 'express';
+import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm';
+import { v4 as uuid } from 'uuid';
+import Survey from './Survey';
+import User from './User';
 
-import usersRoute from './usersRoute';
-import surveysRoute from './surveysRoute';
-import responsesRoute from './responsesRouter';
+@Entity('surveys_responses')
+class SurveyResponse {
+  @PrimaryColumn()
+  readonly id: string;
 
-export default {
-  init(app: Express) {
-    app.use(usersRoute.path, usersRoute.router);
-    app.use(surveysRoute.path, surveysRoute.router);
-    app.use(responsesRoute.path, responsesRoute.router);
+  @Column()
+  user_id: string;
+
+  @ManyToOne(() => User)
+  @JoinColumn({ name: 'user_id' })
+  user: User
+
+  @ManyToOne(() => Survey)
+  @JoinColumn({ name: 'survey_id' })
+  survey: Survey
+
+  @Column()
+  survey_id: string;
+
+  @Column()
+  value: number;
+
+  @CreateDateColumn()
+  created_at: Date;
+
+  constructor() {
+    if (!this.id) {
+      this.id = uuid();
+    }
   }
-}
+};
+
+export default SurveyResponse

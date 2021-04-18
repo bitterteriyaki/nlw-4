@@ -20,11 +20,11 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-import { MigrationInterface, QueryRunner, Table } from 'typeorm';
+import { MigrationInterface, QueryRunner, Table} from 'typeorm';
 
-const TABLE_NAME = 'surveys';
+const TABLE_NAME = 'surveys_responses';
 
-export class CreateSurvey1618698094880 implements MigrationInterface {
+export class CreateSurveyResponse1618706882884 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.createTable(
       new Table({
@@ -36,17 +36,40 @@ export class CreateSurvey1618698094880 implements MigrationInterface {
             isPrimary: true
           },
           {
-            name: 'title',
-            type: 'varchar'
+            name: 'user_id',
+            type: 'uuid'
           },
           {
-            name: 'description',
-            type: 'varchar'
+            name: 'survey_id',
+            type: 'uuid'
+          },
+          {
+            name: 'value',
+            type: 'number',
+            isNullable: true
           },
           {
             name: 'created_at',
             type: 'timestamp',
             default: 'now()'
+          }
+        ],
+        foreignKeys: [
+          {
+            name: 'fk_user',
+            referencedTableName: 'users',
+            referencedColumnNames: ['id'],
+            columnNames: ['user_id'],
+            onDelete: 'CASCADE',
+            onUpdate: 'CASCADE'
+          },
+          {
+            name: 'fk_survey',
+            referencedTableName: 'surveys',
+            referencedColumnNames: ['id'],
+            columnNames: ['survey_id'],
+            onDelete: 'CASCADE',
+            onUpdate: 'CASCADE'
           }
         ]
       })
