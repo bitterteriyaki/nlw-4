@@ -20,14 +20,36 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-import { Express } from 'express';
+import request from 'supertest';
+import app from '../app';
 
-import usersRoute from './usersRoute';
-import surveysRoute from './surveysRoute';
+import createConnection from '../database';
 
-export default {
-  init(app: Express) {
-    app.use(usersRoute.path, usersRoute.router);
-    app.use(surveysRoute.path, surveysRoute.router);
-  }
+
+const exampleUser = {
+  email: 'user@example.com',
+  name: 'User'
 }
+
+describe('Users', () => {
+  beforeAll(async () => {
+    const connection = await createConnection();
+    await connection.runMigrations()
+  });
+
+  it('Should be able to create a new user', async () => {
+    const res = await request(app)
+      .post('/users')
+      .send(exampleUser);
+
+    expect(res.status).toBe(201)
+  });
+
+  it('Should not be able to create with a existing e-mail', async () => {
+    const res = await request(app)
+      .post('/users')
+      .send(exampleUser);
+
+    expect(res.status).toBe(400)
+  })
+})

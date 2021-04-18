@@ -20,5 +20,17 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-import { createConnection } from 'typeorm';
-createConnection();
+import { Connection, createConnection, getConnectionOptions } from 'typeorm';
+
+const TEST_DATABASE_PATH = './src/database/database.test.sqlite';
+
+export default async (): Promise<Connection> => {
+  const defaultOptions = await getConnectionOptions();
+  const database = process.env.NODE_ENV === 'test' ? TEST_DATABASE_PATH : defaultOptions.database;
+
+  return createConnection(
+    Object.assign(defaultOptions, {
+      database: database
+    })
+  );
+}

@@ -20,14 +20,40 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-import { Express } from 'express';
+import { MigrationInterface, QueryRunner, Table } from 'typeorm';
 
-import usersRoute from './usersRoute';
-import surveysRoute from './surveysRoute';
+const TABLE_NAME = 'surveys';
 
-export default {
-  init(app: Express) {
-    app.use(usersRoute.path, usersRoute.router);
-    app.use(surveysRoute.path, surveysRoute.router);
+export class CreateSurvey1618698094880 implements MigrationInterface {
+  public async up(queryRunner: QueryRunner): Promise<void> {
+    await queryRunner.createTable(
+      new Table({
+        name: TABLE_NAME,
+        columns: [
+          {
+            name: 'id',
+            type: 'uuid',
+            isPrimary: true
+          },
+          {
+            name: 'title',
+            type: 'varchar'
+          },
+          {
+            name: 'description',
+            type: 'varchar'
+          },
+          {
+            name: 'created_at',
+            type: 'timestamp',
+            default: 'now()'
+          }
+        ]
+      })
+    )
+  }
+
+  public async down(queryRunner: QueryRunner): Promise<void> {
+    await queryRunner.dropTable(TABLE_NAME);
   }
 }

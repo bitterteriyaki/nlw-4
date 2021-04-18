@@ -20,14 +20,10 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-import { Express } from 'express';
+import { EntityRepository, Repository } from 'typeorm';
+import User from '../models/User';
 
-import usersRoute from './usersRoute';
-import surveysRoute from './surveysRoute';
+@EntityRepository(User)
+class UsersRepository extends Repository<User> {};
 
-export default {
-  init(app: Express) {
-    app.use(usersRoute.path, usersRoute.router);
-    app.use(surveysRoute.path, surveysRoute.router);
-  }
-}
+export default UsersRepository

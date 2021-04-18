@@ -20,14 +20,30 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-import { Express } from 'express';
+import { Router } from 'express';
+import { getCustomRepository } from 'typeorm';
 
-import usersRoute from './usersRoute';
-import surveysRoute from './surveysRoute';
+import { AppError } from '../errors';
+import UsersRepository from '../repositories/UsersRepository';
+
+const router = Router();
+
+router.post('/', async (req, res, next) => {
+  const { name, email } = req.body;
+
+  const users = getCustomRepository(UsersRepository)
+
+  if (await users.findOne({ email })) {
+    return next(new AppError(400, 'User already exists'));
+  }
+
+  const user = users.create({ name, email });
+
+  await users.save(user);
+  return res.status(201).json(user)
+});
 
 export default {
-  init(app: Express) {
-    app.use(usersRoute.path, usersRoute.router);
-    app.use(surveysRoute.path, surveysRoute.router);
-  }
-}
+  path: '/users',
+  router: router
+} 

@@ -20,22 +20,10 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-import 'reflect-metadata';
-import express from 'express';
-
+import app from './app';
 import { log } from './utils';
-import './database';
 
-const app = express();
 const port = 3000;
-
-import middlewares from './middlewares';
-import routes from './routes';
-import handlers from './handlers';
-
-middlewares.init(app);
-routes.init(app);
-handlers.init(app);
 
 app.listen(port, () => {
   log(`Listening at http://localhost:${port}`);

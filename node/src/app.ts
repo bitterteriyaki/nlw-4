@@ -20,30 +20,20 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-import { Router } from 'express';
-import { getRepository } from 'typeorm';
+import 'reflect-metadata';
+import express from 'express';
 
-import User from '../models/User';
-import { AppError } from '../errors';
+import createConnection from './database';
+createConnection();
 
-const router = Router();
+const app = express();
 
-router.post('/', async (req, res, next) => {
-  const { name, email } = req.body;
+import middlewares from './middlewares';
+import routes from './routes';
+import handlers from './handlers';
 
-  const users = getRepository(User);
+middlewares.init(app);
+routes.init(app);
+handlers.init(app);
 
-  if (await users.findOne({ email })) {
-    return next(new AppError(400, 'User already exists'));
-  }
-
-  const user = users.create({ name, email });
-
-  await users.save(user);
-  return res.json(user);
-});
-
-export default {
-  path: '/users',
-  router: router
-}
+export default app

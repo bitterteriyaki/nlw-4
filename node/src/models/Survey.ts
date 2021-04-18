@@ -20,14 +20,28 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-import { Express } from 'express';
+import { Column, CreateDateColumn, Entity, PrimaryColumn } from 'typeorm';
+import { v4 as uuid } from 'uuid';
 
-import usersRoute from './usersRoute';
-import surveysRoute from './surveysRoute';
+@Entity('surveys')
+class Survey {
+  @PrimaryColumn()
+  readonly id: string;
 
-export default {
-  init(app: Express) {
-    app.use(usersRoute.path, usersRoute.router);
-    app.use(surveysRoute.path, surveysRoute.router);
+  @Column()
+  title: string;
+
+  @Column()
+  description: string;
+
+  @CreateDateColumn()
+  created_at: Date;
+
+  constructor() {
+    if (!this.id) {
+      this.id = uuid();
+    }
   }
-}
+};
+
+export default Survey
